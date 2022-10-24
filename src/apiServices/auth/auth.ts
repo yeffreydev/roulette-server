@@ -29,11 +29,12 @@ passport.use(
         age: req.body.age,
       };
       try {
-        // let newUser = await userDb.create(user);
+        let newUser = await userDb.create(user);
+        if (!newUser)
+          return done(null, null, { message: "username not avilable" });
+        return done(null, newUser);
       } catch (e) {
-        console.error(
-          "[error][auth]" + typeof e === "object" ? JSON.stringify(e) : e
-        );
+        done(e);
       }
     }
   )
@@ -49,7 +50,15 @@ passport.use(
       passwordField: "password",
       passReqToCallback: true,
     },
-    async (req, username, password, done) => {}
+    async (req, username, password, done) => {
+      try {
+        let user = await userDb.readByUsername(username);
+        if (!user) return done(null, null, { message: "user not found" });
+        return done(null, user);
+      } catch (e) {
+        done(e);
+      }
+    }
   )
 );
 

@@ -1,6 +1,6 @@
 import { db } from "../../../config/db";
 import { OkPacket } from "mysql2";
-import { UserModel } from "../model";
+import { UserI, UserModel } from "../model";
 
 class UserRepository {
   readAll(): Promise<UserModel[]> {
@@ -23,10 +23,22 @@ class UserRepository {
       );
     });
   }
-  create(user: UserModel): Promise<UserModel> {
+  readByUsername(username: string): Promise<UserModel> {
+    return new Promise((resolve, reject) => {
+      db.query<UserModel[]>(
+        "SELECT * FROM users WHERE username = ?",
+        [username],
+        (err, res) => {
+          if (err) reject(err);
+          else resolve(res?.[0]);
+        }
+      );
+    });
+  }
+  create(user: UserI): Promise<UserModel> {
     return new Promise((resolve, reject) => {
       db.query<OkPacket>(
-        "INSERT INTO users (username email age password) VALUES(?,?,?,?)",
+        "INSERT INTO users (username, email, age, password) VALUES(?,?,?,?);",
         [user.username, user.email, user.age, user.password],
         (err, res) => {
           if (err) reject(err);
@@ -38,7 +50,7 @@ class UserRepository {
       );
     });
   }
-  update(user: UserModel): Promise<UserModel | undefined> {
+  update(user: UserI): Promise<UserModel | undefined> {
     return new Promise((resolve, reject) => {
       db.query<OkPacket>(
         "UPDATE users SET username = ? email = ? age = ? password = ? WHERE id = ?",

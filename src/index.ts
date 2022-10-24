@@ -1,3 +1,5 @@
 import httpServer from "./app";
-
-httpServer.listen(3000, () => console.log("server running on port 3000"));
+import config from "./config/development";
+httpServer.listen(config.port, () =>
+  console.log("server running on port ", config.port)
+);
