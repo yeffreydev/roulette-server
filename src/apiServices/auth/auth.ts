@@ -1,12 +1,12 @@
 import passport from "passport";
 import UserRepository from "../users/utils/user.db";
-
+import helpers from "./helpers";
 import { Strategy } from "passport-local";
 import passport_jwt, { ExtractJwt } from "passport-jwt";
 
 //import config
 import config from "../../config/development";
-import { UserI } from "../users/model";
+import { UserI, UserModel } from "../users/model";
 
 const JWTStrategy = passport_jwt.Strategy;
 
@@ -25,7 +25,7 @@ passport.use(
       let user: UserI = {
         username,
         email: req.body.email,
-        password,
+        password: await helpers.encryptPassword(password),
         age: req.body.age,
       };
       try {
@@ -52,10 +52,16 @@ passport.use(
     },
     async (req, username, password, done) => {
       try {
-        let user = await userDb.readByUsername(username);
-        if (!user) return done(null, null, { message: "user not found" });
-        return done(null, user);
+        const user: UserModel = await userDb.readByUsernameOrEmail(username);
+        //user not found next line
+        if (!user)
+          return done(null, null, { message: "username or password invalid" });
+        const isValid = await helpers.validatePassword(password, user.password);
+        if (!isValid)
+          return done(null, null, { message: "username or password invalid" });
+        return done(null, true);
       } catch (e) {
+        console.log(e);
         done(e);
       }
     }

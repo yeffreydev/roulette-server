@@ -8,19 +8,15 @@ const login: RequestHandler = async (req, res, next) => {
   try {
     passport.authenticate("login", (err, user, info) => {
       if (err) {
-        res.status(500).json({ message: "database error" });
-        return next(err);
+        return res.status(301).json({ message: info });
       }
-      if (!user)
-        return res
-          .status(501)
-          .json({ message: "username or password invalid" });
-      req.login(user, { session: false }, async (err) => {
-        if (err) return next(err);
+      if (!user) return res.status(301).json({ message: info });
+      req.logIn(user, { session: false }, async (err) => {
+        if (err) res.status(301).json({ message: info });
         const token = jwt.sign({ id: user.id }, config.JWT_KEY);
-        return res.status(200).json({ token, auth: true });
+        return res.status(301).json({ token, auth: true });
       });
-    })(req.res, next);
+    })(req, res, next);
   } catch (e) {
     res.status(501).json({ mesage: "username or password invalid" });
     console.error("[user.controller][loginser][error]");

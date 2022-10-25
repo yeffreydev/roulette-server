@@ -23,11 +23,11 @@ class UserRepository {
       );
     });
   }
-  readByUsername(username: string): Promise<UserModel> {
+  readByUsernameOrEmail(username: string): Promise<UserModel> {
     return new Promise((resolve, reject) => {
       db.query<UserModel[]>(
-        "SELECT * FROM users WHERE username = ?",
-        [username],
+        "SELECT * FROM users WHERE username = ? or email = ?",
+        [username, username],
         (err, res) => {
           if (err) reject(err);
           else resolve(res?.[0]);
@@ -37,7 +37,7 @@ class UserRepository {
   }
   create(user: UserI): Promise<UserModel> {
     return new Promise((resolve, reject) => {
-      db.query<OkPacket>(
+      db.execute<OkPacket>(
         "INSERT INTO users (username, email, age, password) VALUES(?,?,?,?);",
         [user.username, user.email, user.age, user.password],
         (err, res) => {
