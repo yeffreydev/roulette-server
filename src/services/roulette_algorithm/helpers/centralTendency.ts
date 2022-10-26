@@ -1,6 +1,6 @@
-import { MedianObject, MeanObject, ModeObject } from "./types";
+import { MedianObject, MeanObject, ModeObject } from "./../types";
 
-const centralTendencyNumbers = {
+export default {
   getMean: (a: number[]): MeanObject => {
     if (a.length % 2 === 0) {
       return {
@@ -40,9 +40,3 @@ const centralTendencyNumbers = {
     };
   },
 };
-
-const rouletteAlgorithm = {
-  centralTendencyNumbers,
-};
-
-export default rouletteAlgorithm;

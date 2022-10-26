@@ -13,3 +13,11 @@ export interface MeanObject {
   mean: [number] | [number, number] | [];
   length: number;
 }
+
+//roulette number
+
+export interface RouletteNumberI {
+  id: number;
+  value: number;
+  color: string;
+}
