@@ -14,7 +14,7 @@ const login: RequestHandler = async (req, res, next) => {
       req.logIn(user, { session: false }, async (err) => {
         if (err) res.status(301).json({ message: info });
         const token = jwt.sign({ id: user.id }, config.JWT_KEY);
-        return res.status(301).json({ token, auth: true });
+        return res.status(200).json({ token, auth: true });
       });
     })(req, res, next);
   } catch (e) {

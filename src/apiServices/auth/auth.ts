@@ -59,7 +59,7 @@ passport.use(
         const isValid = await helpers.validatePassword(password, user.password);
         if (!isValid)
           return done(null, null, { message: "username or password invalid" });
-        return done(null, true);
+        return done(null, user);
       } catch (e) {
         console.log(e);
         done(e);

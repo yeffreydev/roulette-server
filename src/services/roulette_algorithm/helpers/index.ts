@@ -51,7 +51,6 @@ export const getValueById = (id: number): number =>
 
 export const calculateDistance = (n1: number, n2: number) =>
   getIndex(n1) - getIndex(n2);
-// algorithm.getHotNumbersByLongLtoR(cNumbers, 30);
 
 export const findLongIndex = (beforeN: number, n: number) => {
   let absoluteLong = 0;
