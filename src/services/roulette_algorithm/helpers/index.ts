@@ -1,6 +1,6 @@
 import { RouletteNumberI } from "../types";
 import centralTendency from "./centralTendency";
-export const rouletteNumbers: RouletteNumberI[] = [
+const rouletteNumbers: RouletteNumberI[] = [
   { id: 0, value: 0, color: "green" },
   { id: 1, value: 32, color: "red" },
   { id: 2, value: 15, color: "black" },
@@ -40,35 +40,37 @@ export const rouletteNumbers: RouletteNumberI[] = [
   { id: 36, value: 26, color: "black" },
 ];
 
-export const parseToArrayNumbers = (a: any[], field: string): number[] =>
+const parseToArrayNumbers = (a: any[], field: string): number[] =>
   a.map((item) => item[field]);
 
-export const getIndex = (n: number): number =>
+const getIndex = (n: number): number =>
   rouletteNumbers.find((item) => item.value === n)?.id || 0;
 
-export const getValueById = (id: number): number =>
+const getValueById = (id: number): number =>
   rouletteNumbers.find((item) => item.id === id)?.value || 0;
 
-export const calculateDistance = (n1: number, n2: number) =>
+const calculateDistance = (n1: number, n2: number) =>
   getIndex(n1) - getIndex(n2);
 // algorithm.getHotNumbersByLongLtoR(cNumbers, 30);
 
-export const findLongIndex = (beforeN: number, n: number) => {
+const findLongIndex = (beforeN: number, n: number) => {
   let absoluteLong = 0;
-  let i1 = getIndex(beforeN);
-  let i2 = getIndex(n);
-  if (i1 < i2) absoluteLong = 37 - i1 + i1;
-  if (i1 > i2) absoluteLong = 37 - (37 - i1 + i1);
+  let i1 = getIndex(n);
+  let i2 = getIndex(beforeN);
+  if (i2 < i1) absoluteLong = 37 - i1 + i2;
+  if (i2 > i1) absoluteLong = 37 - (37 - i2 + i1);
   return absoluteLong;
 };
 
-export const findIndex = (n: number, long: number) => {
+const findIndex = (n: number, long: number) => {
   let index = getIndex(n);
   if (long == 0 || long == 37) return index;
-  if (index + long < 37) return index + long;
-  return index - (37 - long);
+  //   if (index + long < 37) return index + long;
+  //   return index - (37 - long);
+  if (index >= long) return index - long;
+  return 37 - (long - index);
 };
-export const longArray = (array: number[]) => {
+const longArray = (array: number[]) => {
   if (!array.length) return [];
   if (array.length === 1) return [0];
   let newArray: number[] = [];
@@ -79,14 +81,16 @@ export const longArray = (array: number[]) => {
   return newArray;
 };
 
-export const getNumbersByLongAlg = (a: number[]) => {
+const getNumbersByLongAlg = (a: number[], length: number) => {
   if (!a.length) return [];
   let long = longArray(a);
-  let hotLongs = centralTendency.getMode(long, 10);
+  let hotLongs = centralTendency.getMode(long, length);
   let newArray: any = [];
   for (let i = 0; i < hotLongs.length; i++) {
     let index = findIndex(a[a.length - 1], hotLongs[i].value);
     newArray.push({
+      now: a[a.length - 1],
+      index,
       number: getValueById(index),
       long: hotLongs[i].value,
       count: hotLongs[i].count,
@@ -94,3 +98,9 @@ export const getNumbersByLongAlg = (a: number[]) => {
   }
   return newArray;
 };
+
+let n = getNumbersByLongAlg([5, 2, 5, 5, 5, 5, 2], 10);
+console.log(n);
+// console.log(findIndex(5, 2));
+// console.log(findIndex(5, 13));
+// console.log(findIndex(5, 0));
