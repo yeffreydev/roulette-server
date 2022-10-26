@@ -6,7 +6,7 @@ export interface MedianObject {
 
 export interface ModeObject {
   count: number;
-  mode: number;
+  value: number;
 }
 
 export interface MeanObject {

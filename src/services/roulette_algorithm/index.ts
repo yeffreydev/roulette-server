@@ -12,17 +12,24 @@ const centralTendencyNumbers = {
       length: a.length,
     };
   },
-  getMode: (a: number[], length: number): ModeObject => {
-    let mode = 0;
-    let count = 0;
+  getMode: (a: number[], length: number): ModeObject[] => {
+    let modes: ModeObject[] = [];
     for (let i = 0; i < a.length; i++) {
-      let suma;
-      for (let j = 0; j < a.length; j++) {}
+      let mode = modes.find((item) => item.value === a[i]);
+      if (!mode) {
+        modes.push({ value: a[i], count: 1 });
+      } else {
+        modes = modes.map((item, index) => {
+          if (item.value === mode?.value) {
+            item = { value: mode.value, count: mode.count + 1 };
+          }
+          return item;
+        });
+      }
     }
-    return {
-      count: a.length,
-      mode: 3,
-    };
+    modes = modes.sort((a, b) => b.count - a.count);
+    if (length < a.length) modes.length = length;
+    return modes;
   },
   getMedian: (a: number[]): MedianObject => {
     return {
@@ -51,6 +58,12 @@ let mean1 = rouletteAlgorithm.centralTendencyNumbers.getMean([
   1, 2, 3, 4, 20, 6, 7, 8, 9,
 ]);
 
+let mode = rouletteAlgorithm.centralTendencyNumbers.getMode(
+  [1, 2, 3, 4, 20, 6, 7, 8, 9, 1, 2, 3, 4, 20, 20, 20],
+  1
+);
+
 console.log(median);
 console.log(mean);
 console.log(mean1);
+console.log(mode);
