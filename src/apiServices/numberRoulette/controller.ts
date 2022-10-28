@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { NumberRouletteI } from "./model";
+import { NumberRouletteI, NumberRouletteModel } from "./model";
 import numberRouletteDb from "./utils/.db";
+import rouletteAlgorithm from "../../services/roulette_algorithm";
 const createNumberRoulette: RequestHandler = async (req, res, next) => {
-  console.log(req.body);
   const userId: any = req.user;
   const numberRoulette: NumberRouletteI = {
     userId,
@@ -16,7 +16,16 @@ const createNumberRoulette: RequestHandler = async (req, res, next) => {
       return res
         .status(501)
         .json({ message: "error creating session roulette" });
-    res.status(200).json(newNumberRoulette);
+    const numbersSession = await numberRouletteDb.readBySessionId(
+      newNumberRoulette.sessionId
+    );
+    if (!numbersSession)
+      return res.status(501).json({ message: "error numbers" });
+    const algs = rouletteAlgorithm.getAlgs(
+      numbersSession.map((item) => parseInt(item.valueNumber))
+    );
+
+    res.status(200).json({ number: newNumberRoulette, algs });
   } catch (e) {
     res.status(500).json({ message: "server error" });
     console.error(
@@ -85,10 +94,14 @@ const getNumbersRouletteBySessionId: RequestHandler = async (
 ) => {
   const sessionId = req.params.sessionId;
   try {
-    const numbersRoulette = await numberRouletteDb.readBySessionId(sessionId);
+    const numbersRoulette: NumberRouletteModel[] =
+      await numberRouletteDb.readBySessionId(sessionId);
     if (!numbersRoulette)
       return res.status(404).json({ message: "numbers roulette not found" });
-    res.status(200).json(numbersRoulette);
+    const algs = rouletteAlgorithm.getAlgs(
+      numbersRoulette.map((item) => parseInt(item.valueNumber))
+    );
+    res.status(200).json({ numbers: numbersRoulette, algs });
   } catch (e) {
     res.status(500).json({ message: "server error" });
     console.error(
@@ -101,10 +114,18 @@ const getNumbersRouletteBySessionId: RequestHandler = async (
 const updateNumberRouletteById: RequestHandler = async (req, res, next) => {
   const numberRoulette = req.body;
   try {
-    const newNumberRoulette = numberRouletteDb.updateById(numberRoulette);
+    const newNumberRoulette = await numberRouletteDb.updateById(numberRoulette);
     if (!newNumberRoulette)
       return res.status(404).json({ message: "error not found for update" });
-    res.status(200).json({ message: "updated successfull" });
+    const numbersSession = await numberRouletteDb.readBySessionId(
+      newNumberRoulette.sessionId
+    );
+    if (!numbersSession)
+      return res.status(501).json({ message: "error numbers" });
+    const algs = rouletteAlgorithm.getAlgs(
+      numbersSession.map((item) => parseInt(item.valueNumber))
+    );
+    res.status(200).json({ message: "updated successfull", algs });
   } catch (e) {
     res.status(500).json({ message: "server error" });
     console.error(
@@ -117,9 +138,17 @@ const updateNumberRouletteById: RequestHandler = async (req, res, next) => {
 const deleteNumberRouletteById: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
   try {
+    const number = await numberRouletteDb.readById(id);
+    if (!number)
+      return res.status(404).json({ message: "not found for delete" });
     const row = numberRouletteDb.deleteById(id);
     if (!row) return res.status(404).json({ message: "not found for delete" });
-    res.status(200).json({ message: "deleted successfull" });
+
+    const numbs = await numberRouletteDb.readBySessionId(number.sessionId);
+    const alg = rouletteAlgorithm.getAlgs(
+      numbs.map((item) => parseInt(item.valueNumber))
+    );
+    res.status(200).json({ message: "deleted successfull", alg });
   } catch (e) {
     res.status(500).json({ message: "server error" });
     console.error(
