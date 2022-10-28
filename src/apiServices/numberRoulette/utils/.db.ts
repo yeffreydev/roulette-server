@@ -70,7 +70,7 @@ const readById = (id: number | string): Promise<NumberRouletteModel> => {
 const create = (nRoulette: NumberRouletteI): Promise<NumberRouletteModel> => {
   return new Promise((res, rej) => {
     db.execute<OkPacket>(
-      "INSERT INTO number_roulette (userId, rouletteId, sessionId, valueNumber) VALUES (?,? ?,?)",
+      "INSERT INTO number_roulette (userId, rouletteId, sessionId, valueNumber) VALUES (?,?,?,?)",
       [
         nRoulette.userId,
         nRoulette.rouletteId,

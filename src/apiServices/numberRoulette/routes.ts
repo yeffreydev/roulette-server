@@ -5,7 +5,7 @@ import passport from "passport";
 const numberRouletteRouter = Router();
 
 /*create number roulette*/
-numberRouletteRouter.get(
+numberRouletteRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   numberRouleteController.createNumberRoulette

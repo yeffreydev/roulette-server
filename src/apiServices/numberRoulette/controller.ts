@@ -2,12 +2,13 @@ import { RequestHandler } from "express";
 import { NumberRouletteI } from "./model";
 import numberRouletteDb from "./utils/.db";
 const createNumberRoulette: RequestHandler = async (req, res, next) => {
+  console.log(req.body);
   const userId: any = req.user;
   const numberRoulette: NumberRouletteI = {
     userId,
     rouletteId: req.body.rouletteId,
     sessionId: req.body.sessionId,
-    valueNumber: req.body.valueNumber,
+    valueNumber: req.body.numberValue,
   };
   try {
     const newNumberRoulette = await numberRouletteDb.create(numberRoulette);
