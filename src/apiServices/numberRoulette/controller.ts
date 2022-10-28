@@ -8,7 +8,7 @@ const createNumberRoulette: RequestHandler = async (req, res, next) => {
     userId,
     rouletteId: req.body.rouletteId,
     sessionId: req.body.sessionId,
-    valueNumber: req.body.numberValue,
+    valueNumber: req.body.valueNumber,
   };
   try {
     const newNumberRoulette = await numberRouletteDb.create(numberRoulette);
