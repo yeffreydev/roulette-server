@@ -5,7 +5,7 @@ import passport from "passport";
 const sessionRouletteRouter = Router();
 
 /*create session roulette*/
-sessionRouletteRouter.get(
+sessionRouletteRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   sessionRouleteController.createSessionRoulette
@@ -22,7 +22,7 @@ sessionRouletteRouter.get(
 sessionRouletteRouter.get(
   "/byRouletteId/:rouletteId",
   passport.authenticate("jwt", { session: false }),
-  sessionRouleteController.getSessionRouletteById
+  sessionRouleteController.getSessionsRouletteByRouletteId
 );
 
 /*get session roulette by id*/

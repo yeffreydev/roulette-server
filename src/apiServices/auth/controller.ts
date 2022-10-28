@@ -8,11 +8,11 @@ const login: RequestHandler = async (req, res, next) => {
   try {
     passport.authenticate("login", (err, user, info) => {
       if (err) {
-        return res.status(301).json({ message: info });
+        return res.status(301).json({ message: "server error ocurred" });
       }
-      if (!user) return res.status(301).json({ message: info });
+      if (!user) return res.status(301).json(info);
       req.logIn(user, { session: false }, async (err) => {
-        if (err) res.status(301).json({ message: info });
+        if (err) res.status(301).json(info);
         const token = jwt.sign({ id: user.id }, config.JWT_KEY);
         return res.status(200).json({ token, auth: true });
       });
