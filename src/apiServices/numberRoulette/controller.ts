@@ -145,10 +145,10 @@ const deleteNumberRouletteById: RequestHandler = async (req, res, next) => {
     if (!row) return res.status(404).json({ message: "not found for delete" });
 
     const numbs = await numberRouletteDb.readBySessionId(number.sessionId);
-    const alg = rouletteAlgorithm.getAlgs(
+    const algs = rouletteAlgorithm.getAlgs(
       numbs.map((item) => parseInt(item.valueNumber))
     );
-    res.status(200).json({ message: "deleted successfull", alg });
+    res.status(200).json({ message: "deleted successfull", algs });
   } catch (e) {
     res.status(500).json({ message: "server error" });
     console.error(
