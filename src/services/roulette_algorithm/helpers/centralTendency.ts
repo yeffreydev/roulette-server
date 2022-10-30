@@ -23,13 +23,15 @@ export default {
         modes = modes.map((item, index) => {
           if (item.value === mode?.value) {
             item = { value: mode.value, count: mode.count + 1 };
+            return item;
           }
           return item;
         });
       }
+      // console.log(modes);
     }
     modes = modes.sort((a, b) => b.count - a.count);
-    if (length < a.length) modes.length = length;
+    if (length < modes.length) modes.length = length;
     return modes;
   },
   getMedian: (a: number[]): MedianObject => {

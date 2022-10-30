@@ -96,6 +96,7 @@ const getNumbersRouletteBySessionId: RequestHandler = async (
   try {
     const numbersRoulette: NumberRouletteModel[] =
       await numberRouletteDb.readBySessionId(sessionId);
+    console.log(numbersRoulette);
     if (!numbersRoulette)
       return res.status(404).json({ message: "numbers roulette not found" });
     const algs = rouletteAlgorithm.getAlgs(
@@ -103,6 +104,7 @@ const getNumbersRouletteBySessionId: RequestHandler = async (
     );
     res.status(200).json({ numbers: numbersRoulette, algs });
   } catch (e) {
+    console.log(e);
     res.status(500).json({ message: "server error" });
     console.error(
       "[error][numberRoulette.controller]:",
