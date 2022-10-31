@@ -96,7 +96,6 @@ const getNumbersRouletteBySessionId: RequestHandler = async (
   try {
     const numbersRoulette: NumberRouletteModel[] =
       await numberRouletteDb.readBySessionId(sessionId);
-    console.log(numbersRoulette);
     if (!numbersRoulette)
       return res.status(404).json({ message: "numbers roulette not found" });
     const algs = rouletteAlgorithm.getAlgs(
